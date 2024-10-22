@@ -21,7 +21,17 @@ categories: [源码]
 
 - 先缓存了原型上的 $mount 方法，再重新定义该方法，我们先来分析这段代码。首先，它对 el 做了限制，Vue 不能挂载在 body、html 这样的根节点上。接下来的是很关键的逻辑 —— 如果没有定义 render 方法，则会把 el 或者 template 字符串转换成 render 方法。这里的核心就是调用 compileToFunctions 方法，把模板编译成 render 函数。最后调用原先原型上的 $mount 方法挂载 vm。
 - $mount 方法支持传入 2 个参数，第一个是 el，它表示挂载的元素，可以是字符串，也可以是 DOM 对象，如果是字符串在浏览器环境下会调用 query 方法转换成 DOM 对象的。第二个参数是和服务端渲染相关，在浏览器环境下我们不需要传第二个参数。
-- $mount 方法实际上会去调用 mountComponent 方法: mountComponent 核心就是先调用 vm.\_render 方法先生成虚拟 Node，再实例化一个渲染 Watcher，在它的回调函数中会调用 updateComponent 方法，最终调用 vm.\_update 更新 DOM。
+- $mount 方法实际上会去调用 `mountComponent` 方法: mountComponent 核心就是先调用 vm._render 方法先生成虚拟 Node，再实例化一个渲染 Watcher，在它的回调函数中会调用 updateComponent 方法，最终调用 vm._update 更新 DOM。
+
+### render
+- Vue 的 _render 方法是实例的一个私有方法，它用来把实例渲染成一个虚拟 Node。它的实现实际上是调用用户传入的 render 方法，或者编译 template 生成的 render 方法，最终返回的是 vnode。
+
+### Virtual DOM
+- Virtual DOM 是一个纯粹的 JS 数据结构，它描述 DOM 结构的信息，可以在内存中进行操作，最终通过一系列操作使真实 DOM 与 Virtual DOM 保持一致。Virtual DOM 本质上是一个 VNode 类的实例对象，它是对真实 DOM 的一种抽象描述。
+- Vue.js 利用 `createElement` 方法创建 VNode
+- _update 方法的作用是把 VNode 渲染成真实的 DOM
+
+
 
 ## Vue2 深入响应式
 
